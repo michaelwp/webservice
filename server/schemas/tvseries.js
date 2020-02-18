@@ -1,6 +1,7 @@
 const {ApolloError} = require('apollo-server');
 const axios = require('axios');
 const redis = require('../redis');
+const serverTvSeries = "http://10.128.0.3:3001";
 
 const typeDefs = `
     extend type Query {
@@ -53,7 +54,7 @@ const resolvers = {
                 return tvSeries.data
             }
 
-            const {data} = await axios.get('http://localhost:3001/api/v1/tvseries/');
+            const {data} = await axios.get(`${serverTvSeries}/api/v1/tvseries/`);
 
             await redis.set('tvseries', JSON.stringify({data: data}));
             await redis.expire('tvseries', 60);
@@ -63,7 +64,7 @@ const resolvers = {
     Mutation: {
         addTvSeries: async (parent, args) => {
             const { data } = await axios.post(
-                `http://localhost:3001/api/v1/tvseries/`,
+                `${serverTvSeries}/api/v1/tvseries/`,
                 {
                     title: args.title,
                     overview: args.overview,
@@ -78,7 +79,7 @@ const resolvers = {
         },
         updateTvSeries: async (parent, args) => {
             const { data } = await axios.put(
-                `http://localhost:3001/api/v1/tvseries/${args._id}`,
+                `${serverTvSeries}/api/v1/tvseries/${args._id}`,
                 {
                     title: args.title,
                     overview: args.overview,
@@ -93,7 +94,7 @@ const resolvers = {
         },
         deleteTvSeries: async (parent, args) => {
             const { data } = await axios.delete(
-                `http://localhost:3001/api/v1/tvseries/${args._id}`,
+                `${serverTvSeries}/api/v1/tvseries/${args._id}`,
             );
 
             await redis.del('tvseries');

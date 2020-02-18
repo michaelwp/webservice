@@ -1,6 +1,7 @@
 const {ApolloError} = require('apollo-server');
 const axios = require('axios');
 const redis = require('../redis');
+const serverMovie = "http://10.128.0.3:3000";
 
 const typeDefs = `
     extend type Query {
@@ -53,7 +54,7 @@ const resolvers = {
                 return movies.data
             }
 
-            const {data} = await axios.get('http://localhost:3000/api/v1/movies/');
+            const {data} = await axios.get(`${serverMovie}/api/v1/movies/`);
 
             await redis.set('movies', JSON.stringify({data: data}));
             await redis.expire('movies', 60);
@@ -63,7 +64,7 @@ const resolvers = {
     Mutation: {
         addMovie: async (parent, args) => {
             const { data } = await axios.post(
-                `http://localhost:3000/api/v1/movies/`,
+                `${serverMovie}/api/v1/movies/`,
                 {
                     title: args.title,
                     overview: args.overview,
@@ -78,7 +79,7 @@ const resolvers = {
         },
         updateMovie: async (parent, args) => {
             const { data } = await axios.put(
-                `http://localhost:3000/api/v1/movies/${args._id}`,
+                `${serverMovie}/api/v1/movies/${args._id}`,
                 {
                     title: args.title,
                     overview: args.overview,
@@ -93,7 +94,7 @@ const resolvers = {
         },
         deleteMovie: async (parent, args) => {
             const { data } = await axios.delete(
-                `http://localhost:3000/api/v1/movies/${args._id}`,
+                `${serverMovie}/api/v1/movies/${args._id}`,
             );
 
             await redis.del('movies');
