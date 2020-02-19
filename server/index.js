@@ -16,6 +16,6 @@ const schema = makeExecutableSchema({
 const server = new ApolloServer({ schema });
 
 // The `listen` method launches a web server.
-server.listen().then(({ url }) => {
+server.listen(4000).then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
 });
